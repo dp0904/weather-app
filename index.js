@@ -1,170 +1,87 @@
 async function fetchData() {
     try {
-        // Fixed latitude and longitude for Cookeville, TN
-        const latitude = 36.1628;
-        const longitude = -85.5016;
 
-        // API URL for Cookeville weather
-        const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,rain&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FChicago`;
+        // my api url, with hard coded latitude and longitude of cookeville
+        const apiUrl = "https://api.open-meteo.com/v1/forecast?latitude=36.1628&longitude=-85.5016&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,is_day&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FChicago"
 
-        const response = await fetch(apiUrl);
+        //sending a get request to the api to make sure the API is responding and reachable
+        const response = await fetch(apiUrl)
+
+        //if its not responding or reachable, throwing an error
         if (!response.ok) {
-            throw new Error("Could not get the data from the Weather API");
+            throw new Error("Could not get the data from the Weather API")
         }
 
-        const data = await response.json();
-        console.log("API Response:", data); // Debug: Log the API response
+        const data = await response.json()
 
-        // Extract current weather data
-        const current = data.current;
+        // Fetching current weather data from the API
+        const current = data.current
 
-        // Display the temperature
-        const temperatureDisplay = document.getElementById("temperatureDisplay");
-        if (temperatureDisplay) {
-            temperatureDisplay.textContent = `Current Temperature: ${current.temperature_2m}°F`;
-        } else {
-            console.error("Temperature display element not found");
-        }
+        // Fetching the temperature and priting it out
+        const temperatureDisplay = document.getElementById("temperatureDisplay")
+        temperatureDisplay.textContent = `${current.temperature_2m}°F`
 
-        // Display the relative humidity
-        const humidityDisplay = document.getElementById("relativeHumidity");
-        if (humidityDisplay) {
-            humidityDisplay.textContent = `Humidity: ${current.relative_humidity_2m}%`;
-        } else {
-            console.error("Humidity display element not found");
-        }
 
-        // Display the apparent temperature
-        const apparentTempDisplay = document.getElementById("apparentTemp");
-        if (apparentTempDisplay) {
-            apparentTempDisplay.textContent = `Feels Like: ${current.apparent_temperature}°F`;
-        } else {
-            console.error("Apparent temperature display element not found");
-        }
+        // Fetching the humidity and priting it out
+        const humidityDisplay = document.getElementById("relativeHumidity")
+        humidityDisplay.textContent = `${current.relative_humidity_2m}%`
 
-        // Display the precipitation
-        const precipitationDisplay = document.getElementById("Precipitation");
-        if (precipitationDisplay) {
-            precipitationDisplay.textContent = `Precipitation: ${current.precipitation} inches`;
-        } else {
-            console.error("Precipitation display element not found");
-        }
+        // Fetching the apparent temperature and priting it out
+        const apparentTempDisplay = document.getElementById("apparentTemp")
+        apparentTempDisplay.textContent = `${current.apparent_temperature}°F`
 
-        // Display the weather icon
-        const weatherIcon = document.getElementById("weatherIcon");
-        const weatherCode = current.weather_code;
-        console.log("Weather Code:", weatherCode); // Debug: Log the weather code
 
-        // Map Open Meteo weather_code to OpenWeatherMap icon_code
+        // Fetching the percipitation data and priting it out
+        const precipitationDisplay = document.getElementById("Precipitation")
+        precipitationDisplay.textContent = `${current.precipitation} inches`
+
+        // Displaying the weather icon for current conditions
+        const weatherIcon = document.getElementById("weatherIcon")
+        const currentConditions = document.getElementById("currentConditions")
+        const weatherCode = current.weather_code
+        const isDay = current.is_day 
+
+        // Mapping of weather codes to appropriate open weather icons
         const iconMap = {
-            0: "01d", // Clear sky (day)
-            1: "02d", // Mainly clear (day)
-            2: "03d", // Partly cloudy (day)
-            3: "04d", // Overcast (day)
-            45: "50d", // Fog
-            48: "50d", // Depositing rime fog
-            51: "09d", // Light drizzle
-            53: "09d", // Moderate drizzle
-            55: "09d", // Dense drizzle
-            56: "13d", // Light freezing drizzle
-            57: "13d", // Dense freezing drizzle
-            61: "10d", // Slight rain
-            63: "10d", // Moderate rain
-            65: "10d", // Heavy rain
-            66: "13d", // Light freezing rain
-            67: "13d", // Heavy freezing rain
-            71: "13d", // Slight snow
-            73: "13d", // Moderate snow
-            75: "13d", // Heavy snow
-            77: "13d", // Snow grains
-            80: "09d", // Slight rain showers
-            81: "09d", // Moderate rain showers
-            82: "09d", // Violent rain showers
-            85: "13d", // Slight snow showers
-            86: "13d", // Heavy snow showers
-            95: "11d", // Thunderstorm
-            96: "11d", // Thunderstorm with slight hail
-            99: "11d", // Thunderstorm with heavy hail
-        };
+            // Clear sky - d for day and n for night
+            0: { day: "01d", night: "01n", description: "Clear sky" },
+            // Rain - d for day and n for night
+            61: { day: "10d", night: "10n", description: "Rain" }, 
+            // Snow - d for day and n for night
+            71: { day: "13d", night: "13n", description: "Snow" }, 
+        }
 
-        const iconCode = iconMap[weatherCode] || "01d"; // Default to clear sky icon
-        const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
-        console.log("Icon URL:", iconUrl); // Debug: Log the icon URL
+        // Determine if it's day or night
+        const iconType = isDay === 1 ? "day" : "night"
+
+        // Get the appropriate icon code and description
+        const iconInfo = iconMap[weatherCode] || { day: "01d", night: "01n", description: "Clear sky" }
+        const iconCode = iconInfo[iconType]
+        const iconDescription = iconInfo.description
+        const iconURL = `https://openweathermap.org/img/wn/${iconCode}@2x.png`
 
         if (weatherIcon) {
-            weatherIcon.src = iconUrl;
-            weatherIcon.alt = `Weather Icon for code ${weatherCode}`;
-            weatherIcon.style.display = "block"; // Make the image visible
+            weatherIcon.src = iconURL
+            weatherIcon.alt = iconDescription
+            weatherIcon.style.display = "inline" // Make the image visible
         } else {
-            console.error("Weather icon element not found");
+            console.error("Weather icon element not found")
         }
 
-        // Extract hourly weather data (first hour)
-        const hourly = data.hourly;
+        currentConditions.textContent = iconDescription
 
-        // Display hourly temperature
-        const hourlyTempDisplay = document.getElementById("hourlyTemp");
-        if (hourlyTempDisplay) {
-            hourlyTempDisplay.textContent = `Hourly Temperature: ${hourly.temperature_2m[0]}°F`;
-        } else {
-            console.error("Hourly temperature display element not found");
-        }
-
-        // Display hourly humidity
-        const hourlyHumidityDisplay = document.getElementById("hourlyHumidity");
-        if (hourlyHumidityDisplay) {
-            hourlyHumidityDisplay.textContent = `Hourly Humidity: ${hourly.relative_humidity_2m[0]}%`;
-        } else {
-            console.error("Hourly humidity display element not found");
-        }
-
-        // Display hourly precipitation probability
-        const hourlyPrecipProbDisplay = document.getElementById("hourlyPrecipProb");
-        if (hourlyPrecipProbDisplay) {
-            hourlyPrecipProbDisplay.textContent = `Hourly Precipitation Probability: ${hourly.precipitation_probability[0]}%`;
-        } else {
-            console.error("Hourly precipitation probability display element not found");
-        }
-
-        // Display hourly rain
-        const hourlyRainDisplay = document.getElementById("hourlyRain");
-        if (hourlyRainDisplay) {
-            hourlyRainDisplay.textContent = `Hourly Rain: ${hourly.rain[0]} inches`;
-        } else {
-            console.error("Hourly rain display element not found");
-        }
-
-        // Extract daily weather data (first day)
-        const daily = data.daily;
-
-        // Display max temperature
-        const maxTempDisplay = document.getElementById("maxTemp");
-        if (maxTempDisplay) {
-            maxTempDisplay.textContent = `Max Temperature: ${daily.temperature_2m_max[0]}°F`;
-        } else {
-            console.error("Max temperature display element not found");
-        }
-
-        // Display min temperature
-        const minTempDisplay = document.getElementById("minTemp");
-        if (minTempDisplay) {
-            minTempDisplay.textContent = `Min Temperature: ${daily.temperature_2m_min[0]}°F`;
-        } else {
-            console.error("Min temperature display element not found");
-        }
-
-        // Display max precipitation probability
-        const maxPrecipProbDisplay = document.getElementById("maxPrecipProb");
-        if (maxPrecipProbDisplay) {
-            maxPrecipProbDisplay.textContent = `Max Precipitation Probability: ${daily.precipitation_probability_max[0]}%`;
-        } else {
-            console.error("Max precipitation probability display element not found");
-        }
     } catch (error) {
-        console.error(error);
-        alert("An error occurred while fetching weather data. Please try again.");
+        //added console.error for debug 
+        console.error(error) 
+        
+        // Displaying error using SweetAlert2
+        Swal.fire({
+            title: "There is an Error!",
+            icon: "error",
+            text: "An error occurred while fetching weather data. Please try again.",
+        })
     }
 }
 
-// Automatically fetch and display weather data when the page loads
-fetchData();
+// Automatically fetches and displays the Weather data when the page loads up
+fetchData()
