@@ -6,47 +6,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <title>Weather App by Dhruv Patel</title>
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
-    <!-- Apple Touch Icons for Home Screen -->
+    <title>Weather App</title>
+    <!-- Apple touch icons that helps user add it to the home screen as a shortcut -->
     <link rel="apple-touch-icon" href="images/apple-touch-icon-iphone60x60.png">
     <link rel="apple-touch-icon" sizes="76x76" href="images/apple-touch-icon-ipad76x76.png">
     <link rel="apple-touch-icon" sizes="120x120" href="images/apple-touch-icon-iphone-retina120x120.png">
     <link rel="apple-touch-icon" sizes="152x152" href="images/apple-touch-icon-ipad-retina152x152.png">
-    <!-- Bootstrap CSS -->
+    <!--Bootstrap-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    <!-- Custom CSS -->
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="text-center d-flex flex-column min-vh-100">
-    <h1>Cookeville's Weather</h1>
-    <!-- Weather Icon -->
-    <img id="weatherIcon" src="" alt="Weather Icon" class="d-block mx-auto" style="width: 100px; height: 100px; display: none;">
+    <h1 class="location-heading">
+        <i class="bi bi-geo-alt-fill"></i> Cookeville, TN
+    </h1>
+
+    <!-- Weather Icon and Current Conditions -->
+    <div class="my-3">
+        <img id="weatherIcon" src="" alt="Weather Icon" class="d-block mx-auto" style="width: 100px; height: 100px; display: none;">
+        <p id="currentConditions" class="mt-2"></p>
+    </div>
 
     <!-- Current Weather Data -->
-    <div class="weather-data">
-        <div class="mb-2" id="temperatureDisplay"></div>
-        <div class="mb-2" id="relativeHumidity"></div>
-        <div class="mb-2" id="apparentTemp"></div>
-        <div class="mb-2" id="Precipitation"></div>
-    </div>
-
-    <!-- Hourly Weather Data -->
-    <div class="weather-data">
-        <div class="mb-2" id="hourlyTemp"></div>
-        <div class="mb-2" id="hourlyHumidity"></div>
-        <div class="mb-2" id="hourlyPrecipProb"></div>
-        <div class="mb-2" id="hourlyRain"></div>
-    </div>
-
-    <!-- Daily Weather Data -->
-    <div class="weather-data">
-        <div class="mb-2" id="maxTemp"></div>
-        <div class="mb-2" id="minTemp"></div>
-        <div class="mb-2" id="maxPrecipProb"></div>
+    <div class="WeatherData">
+        <div class="mb-2">
+            <i class="bi bi-thermometer-half"></i>
+            <span id="temperatureDisplay"></span>
+        </div>
+        <div class="mb-2">
+            <i class="bi bi-droplet"></i>
+            <span id="relativeHumidity"></span>
+        </div>
+        <div class="mb-2">
+            <i class="bi bi-thermometer-snow"></i>
+            <span id="apparentTemp"></span>
+        </div>
+        <div class="mb-2">
+            <i class="bi bi-cloud-rain"></i>
+            <span id="Precipitation"></span>
+        </div>
     </div>
 
     <!-- Footer -->
@@ -54,6 +55,8 @@
         <p>Weather data courtesy of <a href="https://open-meteo.com/" target="_blank">Open Meteo</a>.</p>
     </footer>
 
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="index.js"></script>
 </body>
 </html>
